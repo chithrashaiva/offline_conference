@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Video Conference</title>
+</head>
+
+<body>
+
+<h2>Video Meeting Room</h2>
+
+<video id="localVideo" autoplay muted></video>
+<video id="remoteVideo" autoplay></video>
+
+<script>
+
+
+
+let localVideo = document.getElementById("localVideo");
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+.then(stream => {
+
+    localVideo.srcObject = stream;
+
+    let peerConnection = new RTCPeerConnection();
+
+    stream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, stream);
+    });
+
+});
+const roomName = "test";
+
+const socket = new WebSocket(
+'ws://' + window.location.host + '/ws/meeting/' + roomName + '/'
+);
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+};
+
+</script>
+
+</body>
+</html>
